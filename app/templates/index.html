@@ -1,9 +1,35 @@
 {% extends "base.html" %}
+{% block hero %}
+{% if not q and not tag and pagination.page == 1 %}
+<section class="hero"><div class="container">
+  <h1>Stories, ideas and everything in between.</h1>
+  <p>A place to read, write and share what you know with the world.</p>
+  {% if current_user.is_authenticated %}
+    <a class="btn green" href="{{ url_for('posts.create') }}">Start writing</a>
+  {% else %}
+    <a class="btn green" href="{{ url_for('auth.register') }}">Start reading &amp; writing</a>
+  {% endif %}
+</div></section>
+{% endif %}
+{% endblock %}
 {% block content %}
-<p>
-  {% for t in tags %}<a class="tag" href="{{ url_for('main.index', tag=t.name) }}">#{{ t.name }}</a>{% endfor %}
-  {% if tag or q %}<a href="{{ url_for('main.index') }}">clear filter</a>{% endif %}
-</p>
-{% if q %}<p>Results for "{{ q }}"</p>{% endif %}
-{% include "_posts_list.html" %}
+<div class="layout" style="margin-top:28px">
+  <section>
+    <h4 class="section-title">
+      {% if q %}Results for "{{ q }}"{% elif tag %}Tagged #{{ tag }}{% else %}Latest stories{% endif %}
+    </h4>
+    {% include "_posts_list.html" %}
+  </section>
+  <aside class="side">
+    <div class="box">
+      <h4 class="section-title">Discover topics</h4>
+      {% for t in tags %}<a class="tag {{ 'active' if t.name == tag }}" href="{{ url_for('main.index', tag=t.name) }}">{{ t.name }}</a>{% else %}<p>No topics yet.</p>{% endfor %}
+      {% if tag or q %}<p><a href="{{ url_for('main.index') }}"><u>Clear filter</u></a></p>{% endif %}
+    </div>
+    <div class="box">
+      <h4 class="section-title">Write on Inkwell</h4>
+      <p>Share your ideas with readers. Create an account and publish your first story in minutes.</p>
+    </div>
+  </aside>
+</div>
 {% endblock %}

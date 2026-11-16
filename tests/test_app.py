@@ -30,7 +30,7 @@ def login(client, u="alice", p="secret1"):
 def test_register_login_logout(client):
     assert b"Registration successful" in register(client).data
     assert b"alice" in login(client).data
-    assert b"Login" in client.get("/auth/logout", follow_redirects=True).data
+    assert b"Sign in" in client.get("/auth/logout", follow_redirects=True).data
 
 
 def test_bad_login(client):
@@ -41,7 +41,7 @@ def test_bad_login(client):
 def test_post_crud(client):
     register(client); login(client)
     r = client.post("/posts/new", data=dict(title="Hello", body="World body", tags="flask, python"), follow_redirects=True)
-    assert b"Post created" in r.data and b"#flask" in r.data
+    assert b"Post created" in r.data and b"flask" in r.data
     assert b"Post updated" in client.post("/posts/1/edit", data=dict(title="Hi2", body="b", tags="x"), follow_redirects=True).data
     assert b"Post deleted" in client.post("/posts/1/delete", follow_redirects=True).data
     assert Post.query.count() == 0

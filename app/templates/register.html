@@ -1,8 +1,12 @@
 {% extends "base.html" %}
+{% block title %}Join - Inkwell{% endblock %}
 {% block content %}
-<h2>Register</h2>
-<form method="post">{{ form.csrf_token }}
-  {% for f in [form.username, form.email, form.password, form.password2] %}{% with field=f %}{% include "_form_field.html" %}{% endwith %}{% endfor %}
-  {{ form.submit() }}
-</form>
+<div class="form-card">
+  <h2>Join Inkwell</h2><p class="sub">Create an account to start writing.</p>
+  <form method="post">{{ form.csrf_token }}
+    {% for f in [form.username, form.email, form.password, form.password2] %}{% with field=f %}{% include "_field.html" %}{% endwith %}{% endfor %}
+    <button class="btn">Create account</button>
+  </form>
+  <p class="alt">Already have an account? <a href="{{ url_for('auth.login') }}">Sign in</a></p>
+</div>
 {% endblock %}

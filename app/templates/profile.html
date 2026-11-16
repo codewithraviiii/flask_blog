@@ -1,7 +1,12 @@
 {% extends "base.html" %}
-{% block title %}{{ user.username }}{% endblock %}
+{% block title %}{{ user.username }} - Inkwell{% endblock %}
 {% block content %}
-<h2>{{ user.username }}</h2>
-<p class="meta">Member since {{ user.created_at.strftime('%d %b %Y') }}</p>
-{% include "_posts_list.html" %}
+<div style="max-width:720px;margin:0 auto">
+  <div class="profile">
+    <span class="avatar lg">{{ user.username|initials }}</span>
+    <div><h1>{{ user.username }}</h1>
+      <p>Joined {{ user.created_at.strftime('%B %Y') }} &middot; {{ user.posts.count() }} stories</p></div>
+  </div>
+  {% include "_posts_list.html" %}
+</div>
 {% endblock %}

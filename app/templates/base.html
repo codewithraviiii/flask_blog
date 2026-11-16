@@ -3,41 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Flask Blog{% endblock %}</title>
-  <style>
-    body{font-family:system-ui,sans-serif;max-width:760px;margin:0 auto;padding:1rem;line-height:1.5}
-    nav{display:flex;gap:1rem;align-items:center;border-bottom:1px solid #ddd;padding-bottom:.5rem;margin-bottom:1rem;flex-wrap:wrap}
-    nav .spacer{flex:1}
-    .flash{padding:.5rem .75rem;border-radius:6px;margin:.5rem 0;background:#eef}
-    .flash.danger{background:#fee}.flash.success{background:#efe}
-    .post{border-bottom:1px solid #eee;padding:.75rem 0}
-    .meta{color:#666;font-size:.9rem}
-    .tag{background:#eee;border-radius:10px;padding:0 .5rem;margin-right:.25rem;font-size:.85rem;text-decoration:none;color:#333}
-    input,textarea{width:100%;padding:.4rem;box-sizing:border-box}
-    .err{color:#b00;font-size:.9rem}
-    .pager{display:flex;gap:1rem;margin:1rem 0}
-  </style>
+  <title>{% block title %}Inkwell - Stories worth sharing{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <nav>
-    <a href="{{ url_for('main.index') }}"><strong>Flask Blog</strong></a>
-    <form action="{{ url_for('main.index') }}" method="get" style="display:flex;gap:.25rem">
-      <input name="q" placeholder="Search posts" value="{{ request.args.get('q','') }}">
-      <button>Search</button>
+  <header class="nav"><div class="container nav-in">
+    <a class="brand" href="{{ url_for('main.index') }}">Ink<span>well</span></a>
+    <form class="search" action="{{ url_for('main.index') }}" method="get">
+      <input name="q" placeholder="Search stories..." value="{{ request.args.get('q','') }}">
     </form>
     <span class="spacer"></span>
     {% if current_user.is_authenticated %}
-      <a href="{{ url_for('posts.create') }}">New Post</a>
-      <a href="{{ url_for('main.profile', username=current_user.username) }}">{{ current_user.username }}</a>
-      <a href="{{ url_for('auth.logout') }}">Logout</a>
+      <a class="link" href="{{ url_for('posts.create') }}">&#9998; Write</a>
+      <a href="{{ url_for('main.profile', username=current_user.username) }}" title="{{ current_user.username }}"><span class="avatar">{{ current_user.username|initials }}</span></a>
+      <a class="link" href="{{ url_for('auth.logout') }}">Logout</a>
     {% else %}
-      <a href="{{ url_for('auth.login') }}">Login</a>
-      <a href="{{ url_for('auth.register') }}">Register</a>
+      <a class="link" href="{{ url_for('auth.login') }}">Sign in</a>
+      <a class="btn" href="{{ url_for('auth.register') }}">Get started</a>
     {% endif %}
-  </nav>
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
-  {% endwith %}
-  {% block content %}{% endblock %}
+  </div></header>
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+    {% endwith %}
+  </div>
+  {% block hero %}{% endblock %}
+  <main class="container">{% block content %}{% endblock %}</main>
+  <footer>Inkwell &middot; Built with Flask</footer>
 </body>
 </html>

@@ -27,6 +27,14 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(posts_bp, url_prefix="/posts")
 
+    @app.template_filter("initials")
+    def initials(name):
+        return (name or "?")[:2].upper()
+
+    @app.template_filter("reading_time")
+    def reading_time(text):
+        return max(1, round(len((text or "").split()) / 200))
+
     with app.app_context():
         db.create_all()
     return app

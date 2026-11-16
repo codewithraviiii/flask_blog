@@ -1,31 +1,47 @@
 {% extends "base.html" %}
-{% block title %}{{ post.title }}{% endblock %}
+{% block title %}{{ post.title }} - Inkwell{% endblock %}
 {% block content %}
-<h2>{{ post.title }}</h2>
-<div class="meta">by <a href="{{ url_for('main.profile', username=post.author.username) }}">{{ post.author.username }}</a>
-  on {{ post.created_at.strftime('%d %b %Y') }}</div>
-<p>{% for t in post.tags %}<a class="tag" href="{{ url_for('main.index', tag=t.name) }}">#{{ t.name }}</a>{% endfor %}</p>
-<div style="white-space:pre-wrap">{{ post.body }}</div>
-{% if current_user == post.author %}
-<p><a href="{{ url_for('posts.edit', post_id=post.id) }}">Edit</a>
-<form method="post" action="{{ url_for('posts.delete', post_id=post.id) }}" style="display:inline">
-  {{ form.csrf_token }}<button onclick="return confirm('Delete this post?')">Delete</button>
-</form></p>
-{% endif %}
-<hr>
-<h3>Comments ({{ post.comments|length }})</h3>
-{% for c in post.comments %}
-<div class="post"><div class="meta">{{ c.author.username }} · {{ c.created_at.strftime('%d %b %Y %H:%M') }}</div>
-  <div>{{ c.body }}</div>
-  {% if current_user == c.author %}
-  <form method="post" action="{{ url_for('posts.delete_comment', comment_id=c.id) }}">{{ form.csrf_token }}<button>Delete</button></form>
+<article class="article">
+  <h1>{{ post.title }}</h1>
+  <div class="author-row">
+    <span class="avatar">{{ post.author.username|initials }}</span>
+    <div class="meta"><b><a href="{{ url_for('main.profile', username=post.author.username) }}">{{ post.author.username }}</a></b><br>
+      {{ post.body|reading_time }} min read &middot; {{ post.created_at.strftime('%d %b %Y') }}</div>
+  </div>
+  <div class="cover" style="background:linear-gradient(135deg,hsl({{ (post.id * 47) % 360 }},70%,75%),hsl({{ (post.id * 47 + 50) % 360 }},70%,60%))"></div>
+  <div class="content">{{ post.body }}</div>
+  <p style="margin-top:24px">{% for t in post.tags %}<a class="tag" href="{{ url_for('main.index', tag=t.name) }}">{{ t.name }}</a>{% endfor %}</p>
+  {% if current_user == post.author %}
+  <div class="actions">
+    <a class="btn ghost sm" href="{{ url_for('posts.edit', post_id=post.id) }}">Edit story</a>
+    <form method="post" action="{{ url_for('posts.delete', post_id=post.id) }}" onsubmit="return confirm('Delete this story?')">
+      {{ form.csrf_token }}<button class="btn danger sm">Delete</button></form>
+  </div>
   {% endif %}
-</div>
-{% endfor %}
-{% if current_user.is_authenticated %}
-<form method="post">{{ form.csrf_token }}
-  {% with field=form.body %}{% include "_form_field.html" %}{% endwith %}
-  {{ form.submit() }}
-</form>
-{% else %}<p><a href="{{ url_for('auth.login', next=request.path) }}">Log in</a> to comment.</p>{% endif %}
+
+  <section class="comments">
+    <h3>Responses ({{ post.comments|length }})</h3>
+    {% if current_user.is_authenticated %}
+    <form method="post" class="comment-form">{{ form.csrf_token }}
+      {% with field=form.body %}{% include "_field.html" %}{% endwith %}
+      <button class="btn green">Respond</button>
+    </form>
+    {% else %}
+    <p><a href="{{ url_for('auth.login', next=request.path) }}"><u>Sign in</u></a> to join the conversation.</p>
+    {% endif %}
+    {% for c in post.comments %}
+    <div class="comment">
+      <span class="avatar sm" style="margin-top:3px">{{ c.author.username|initials }}</span>
+      <div style="flex:1">
+        <div class="c-meta"><b>{{ c.author.username }}</b> &middot; {{ c.created_at.strftime('%d %b %Y') }}</div>
+        <p>{{ c.body }}</p>
+        {% if current_user == c.author %}
+        <form method="post" action="{{ url_for('posts.delete_comment', comment_id=c.id) }}">{{ form.csrf_token }}
+          <button class="btn danger sm" style="margin-top:6px">Delete</button></form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+</article>
 {% endblock %}

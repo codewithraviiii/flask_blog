@@ -1,8 +1,11 @@
 {% extends "base.html" %}
+{% block title %}{{ heading }} - Inkwell{% endblock %}
 {% block content %}
-<h2>{{ heading }}</h2>
-<form method="post">{{ form.csrf_token }}
-  {% for f in [form.title, form.body, form.tags] %}{% with field=f %}{% include "_form_field.html" %}{% endwith %}{% endfor %}
-  {{ form.submit() }}
-</form>
+<div class="form-card wide">
+  <h2>{{ heading }}</h2><p class="sub">Tell your story. Separate tags with commas.</p>
+  <form method="post">{{ form.csrf_token }}
+    {% for f in [form.title, form.body, form.tags] %}{% with field=f %}{% include "_field.html" %}{% endwith %}{% endfor %}
+    <button class="btn green">Publish</button>
+  </form>
+</div>
 {% endblock %}

@@ -1,8 +1,12 @@
 {% extends "base.html" %}
+{% block title %}Sign in - Inkwell{% endblock %}
 {% block content %}
-<h2>Login</h2>
-<form method="post">{{ form.csrf_token }}
-  {% for f in [form.username, form.password] %}{% with field=f %}{% include "_form_field.html" %}{% endwith %}{% endfor %}
-  {{ form.submit() }}
-</form>
+<div class="form-card">
+  <h2>Welcome back</h2><p class="sub">Sign in to read, write and respond.</p>
+  <form method="post">{{ form.csrf_token }}
+    {% for f in [form.username, form.password] %}{% with field=f %}{% include "_field.html" %}{% endwith %}{% endfor %}
+    <button class="btn">Sign in</button>
+  </form>
+  <p class="alt">No account? <a href="{{ url_for('auth.register') }}">Create one</a></p>
+</div>
 {% endblock %}
