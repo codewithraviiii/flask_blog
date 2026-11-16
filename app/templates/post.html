@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block content %}
+<h2>{{ post.title }}</h2>
+<div class="meta">by <a href="{{ url_for('main.profile', username=post.author.username) }}">{{ post.author.username }}</a>
+  on {{ post.created_at.strftime('%d %b %Y') }}</div>
+<p>{% for t in post.tags %}<a class="tag" href="{{ url_for('main.index', tag=t.name) }}">#{{ t.name }}</a>{% endfor %}</p>
+<div style="white-space:pre-wrap">{{ post.body }}</div>
+{% if current_user == post.author %}
+<p><a href="{{ url_for('posts.edit', post_id=post.id) }}">Edit</a>
+<form method="post" action="{{ url_for('posts.delete', post_id=post.id) }}" style="display:inline">
+  {{ form.csrf_token }}<button onclick="return confirm('Delete this post?')">Delete</button>
+</form></p>
+{% endif %}
+<hr>
+<h3>Comments ({{ post.comments|length }})</h3>
+{% for c in post.comments %}
+<div class="post"><div class="meta">{{ c.author.username }} · {{ c.created_at.strftime('%d %b %Y %H:%M') }}</div>
+  <div>{{ c.body }}</div>
+  {% if current_user == c.author %}
+  <form method="post" action="{{ url_for('posts.delete_comment', comment_id=c.id) }}">{{ form.csrf_token }}<button>Delete</button></form>
+  {% endif %}
+</div>
+{% endfor %}
+{% if current_user.is_authenticated %}
+<form method="post">{{ form.csrf_token }}
+  {% with field=form.body %}{% include "_form_field.html" %}{% endwith %}
+  {{ form.submit() }}
+</form>
+{% else %}<p><a href="{{ url_for('auth.login', next=request.path) }}">Log in</a> to comment.</p>{% endif %}
+{% endblock %}

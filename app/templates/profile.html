@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }}{% endblock %}
+{% block content %}
+<h2>{{ user.username }}</h2>
+<p class="meta">Member since {{ user.created_at.strftime('%d %b %Y') }}</p>
+{% include "_posts_list.html" %}
+{% endblock %}

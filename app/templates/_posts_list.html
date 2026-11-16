@@ -1,0 +1,17 @@
+{% set base = dict(request.view_args or {}, q=request.args.get("q"), tag=request.args.get("tag")) %}
+{% for post in pagination.items %}
+<div class="post">
+  <h3><a href="{{ url_for('posts.view', post_id=post.id) }}">{{ post.title }}</a></h3>
+  <div class="meta">by <a href="{{ url_for('main.profile', username=post.author.username) }}">{{ post.author.username }}</a>
+    on {{ post.created_at.strftime('%d %b %Y') }} · {{ post.comments|length }} comments</div>
+  <p>{{ post.body|truncate(200) }}</p>
+  {% for t in post.tags %}<a class="tag" href="{{ url_for('main.index', tag=t.name) }}">#{{ t.name }}</a>{% endfor %}
+</div>
+{% else %}
+<p>No posts found.</p>
+{% endfor %}
+<div class="pager">
+  {% if pagination.has_prev %}<a href="{{ url_for(request.endpoint, page=pagination.prev_num, **base) }}">&larr; Newer</a>{% endif %}
+  {% if pagination.pages > 1 %}<span>Page {{ pagination.page }} of {{ pagination.pages }}</span>{% endif %}
+  {% if pagination.has_next %}<a href="{{ url_for(request.endpoint, page=pagination.next_num, **base) }}">Older &rarr;</a>{% endif %}
+</div>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<p>
+  {% for t in tags %}<a class="tag" href="{{ url_for('main.index', tag=t.name) }}">#{{ t.name }}</a>{% endfor %}
+  {% if tag or q %}<a href="{{ url_for('main.index') }}">clear filter</a>{% endif %}
+</p>
+{% if q %}<p>Results for "{{ q }}"</p>{% endif %}
+{% include "_posts_list.html" %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ heading }}</h2>
+<form method="post">{{ form.csrf_token }}
+  {% for f in [form.title, form.body, form.tags] %}{% with field=f %}{% include "_form_field.html" %}{% endwith %}{% endfor %}
+  {{ form.submit() }}
+</form>
+{% endblock %}
